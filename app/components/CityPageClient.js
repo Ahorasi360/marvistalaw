@@ -22,42 +22,7 @@ const CITY_PHOTOS = [
 ];
 
 
-const UNSPLASH_CITY_PHOTOS = {
-  'Los Angeles': '1542393545-10f5cde2c810',
-  'San Diego': '1538964173425-93884d739596', 
-  'San Francisco': '1501594907352-04cda38ebc29',
-  'San Jose': '1559521783-1d1599583485',
-  'Fresno': '1568702846914-96b305d2aaeb',
-  'Sacramento': '1477959858617-67f85cf4f1df',
-  'Long Beach': '1526392060635-9d6019884377',
-  'Oakland': '1501466044931-62695aada8e9',
-  'Bakersfield': '1558618666-fcd25c85cd64',
-  'Anaheim': '1513635269975-59663e0ac1ad',
-  'Santa Ana': '1565793979747-cac4fe1b7332',
-  'Riverside': '1549880338-65ddcdfd017b',
-  'Stockton': '1501854140801-50d01698950b',
-  'Irvine': '1524813686514-a57563d77965',
-  'Fremont': '1519501025264-65ba15a82390',
-  'San Bernardino': '1506905925346-21bda4d32df4',
-  'Modesto': '1500534314209-a25ddb2bd429',
-  'Fontana': '1492571350019-22de08371fd3',
-  'Oxnard': '1507525428034-b723cf961d3e',
-  'Moreno Valley': '1469474968028-56623f02e42e',
-  'Glendale': '1502472584811-0a2f2feb8968',
-  'Pomona': '1518020382113-a7e8fc38eac9',
-  'Salinas': '1504701954957-2010ec3bcec1',
-  'Corona': '1464822759023-fed622ff2c3b',
-  'Palmdale': '1501523460185-2aa5d2a0f981',
-  'Lancaster': '1501854140801-50d01698950b',
-  'Escondido': '1476514525535-07fb3b4ae5f1',
-  'Torrance': '1507003211169-0a1dd7228f2d',
-  'Sunnyvale': '1528360983277-13d401cdc186',
-  'Santa Clarita': '1464822759023-fed622ff2c3b',
-  'Hayward': '1497366216548-37526070297c',
-  'Pasadena': '1565204696132-a703b49eb16e',
-};
-
-function getCityUnsplashId(cityName) {
+function getCityUnsplashIdOLD(cityName) {
   // Check exact match first
   if (UNSPLASH_CITY_PHOTOS[cityName]) return UNSPLASH_CITY_PHOTOS[cityName];
   // Default to a beautiful California landscape
@@ -129,7 +94,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
           {/* City photo */}
           <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', height: '280px', background: '#E5E7EB', position: 'relative' }}>
             <img
-              src={'https://picsum.photos/seed/' + cityData.slug + '/1200/400'}
+              src={'https://picsum.photos/seed/' + cityData.slug + '/900/350'}
               alt={cityData.city + ', California'}
               style={{ width: '100%', height: '280px', objectFit: 'cover', display: 'block' }}
               onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542393545-10f5cde2c810?auto=format&fit=crop&w=1200&q=80'; }}
