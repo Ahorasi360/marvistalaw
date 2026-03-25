@@ -64,7 +64,7 @@ export default async function CityServicePage({ params }) {
         areaServed: { '@type': 'City', name: cityData.city },
         serviceType: service.name,
         availableLanguage: ['English', 'Spanish'],
-        telephone: '[PHONE-MARVISTALAW]',
+        telephone: '(323) 418-2252',
       },
       {
         '@type': 'BreadcrumbList',
