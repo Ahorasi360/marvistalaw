@@ -2,7 +2,6 @@
 // app/components/CityPageClient.js
 // Handles the bilingual rendering of the 33,540 city+service pages
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from './Navbar';
 import LeadForm from './LeadForm';
 import { useLang, T } from '../lib/LanguageContext';
@@ -129,12 +128,11 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
         <div>
           {/* City photo */}
           <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', height: '280px', background: '#E5E7EB', position: 'relative' }}>
-            <Image
-              src={`https://source.unsplash.com/1200x400/?${encodeURIComponent(cityData.city)},california`}
-              alt={`${cityData.city}, California`}
-              fill
-              style={{ objectFit: 'cover' }}
-              unoptimized
+            <img
+              src={'https://images.unsplash.com/photo-' + getCityUnsplashId(cityData.city) + '?auto=format&fit=crop&w=1200&q=80'}
+              alt={cityData.city + ', California'}
+              style={{ width: '100%', height: '280px', objectFit: 'cover', display: 'block' }}
+              onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542393545-10f5cde2c810?auto=format&fit=crop&w=1200&q=80'; }}
             />
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.6))', padding: '20px 16px 12px' }}>
               <span style={{ color: 'white', fontSize: '14px', fontWeight: '600' }}>{cityData.city}, {cityData.county} County, California</span>
