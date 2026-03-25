@@ -89,7 +89,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
       </div>
 
       {/* Main content */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: '24px' }}>
+      <div className='city-content-grid' style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', display: 'grid', gap: '24px' }}>
         <div>
           {/* City photo */}
           <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', height: '280px', background: '#E5E7EB', position: 'relative' }}>
