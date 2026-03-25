@@ -4,7 +4,7 @@
 // Usage: node scripts/generate-pages.js
 // Env vars needed: ANTHROPIC_API_KEY, NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
-const fetch = require('node-fetch');
+// fetch is native in Node 18+
 const { createClient } = require('@supabase/supabase-js');
 
 // ── Config ──────────────────────────────────────────────────────────────────
