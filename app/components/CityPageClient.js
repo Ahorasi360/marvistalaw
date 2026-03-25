@@ -22,22 +22,7 @@ const CITY_PHOTOS = [
 ];
 
 
-function getCityUnsplashIdOLD(cityName) {
-  // Check exact match first
-  if (UNSPLASH_CITY_PHOTOS[cityName]) return UNSPLASH_CITY_PHOTOS[cityName];
-  // Default to a beautiful California landscape
-  const defaults = [
-    '1542393545-10f5cde2c810', // LA
-    '1538964173425-93884d739596', // San Diego
-    '1501594907352-04cda38ebc29', // SF
-    '1476514525535-07fb3b4ae5f1', // scenic CA
-    '1464822759023-fed622ff2c3b', // CA mountains
-    '1507525428034-b723cf961d3e', // CA beach
-  ];
-  let hash = 0;
-  for (let i = 0; i < cityName.length; i++) hash = (hash * 31 + cityName.charCodeAt(i)) & 0xFFFFFF;
-  return defaults[Math.abs(hash) % defaults.length];
-}
+
 
 
 export default function CityPageClient({ service, cityData, content, relatedCities, relatedServices, serviceSlug, citySlug }) {
