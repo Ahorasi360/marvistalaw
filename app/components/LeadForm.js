@@ -112,8 +112,8 @@ export default function LeadForm({ service, city, county }) {
 }
 
 const inputStyle = {
-  background: 'rgba(255,255,255,0.15)',
-  border: '1px solid rgba(255,255,255,0.3)',
+  background: 'white',
+  border: '1px solid #BFDBFE',
   borderRadius: '8px',
   padding: '12px 14px',
   color: 'white',
