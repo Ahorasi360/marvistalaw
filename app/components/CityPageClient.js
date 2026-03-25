@@ -89,7 +89,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
       </div>
 
       {/* Main content */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 16px', display: 'grid', gridTemplateColumns: '1fr 340px', gap: '48px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', gap: '24px' }}>
         <div>
           {/* City photo */}
           <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', height: '280px', background: '#E5E7EB', position: 'relative' }}>
@@ -226,7 +226,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
       {/* MS360 DIY Promo Section */}
       {service.ms360Path && (
         <div style={{ background: '#EFF6FF', borderTop: '4px solid #F59E0B', padding: '48px 16px' }}>
-          <div style={{ maxWidth: '860px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr auto', gap: '32px', alignItems: 'center' }}>
+          <div style={{ maxWidth: '860px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
               <div style={{ fontSize: '13px', fontWeight: '700', color: '#F59E0B', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
                 💡 {lang === 'es' ? '¿Prefiere hacerlo usted mismo?' : 'Prefer the DIY route?'}
