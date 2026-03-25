@@ -1,7 +1,12 @@
+'use client';
 // app/components/Navbar.js
 import Link from 'next/link';
+import { useLang, T } from '../lib/LanguageContext';
 
 export default function Navbar() {
+  const { lang, setLang } = useLang();
+  const t = T[lang].nav;
+
   return (
     <nav style={{
       background: 'white',
@@ -11,29 +16,83 @@ export default function Navbar() {
       zIndex: 50,
     }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '64px' }}>
-        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '32px', height: '32px', background: '#1E3A8A', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#F59E0B', fontWeight: '800', fontSize: '16px' }}>M</span>
+        
+        {/* Logo */}
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '36px', height: '36px', background: '#1E3A8A', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <span style={{ color: '#F59E0B', fontWeight: '800', fontSize: '18px' }}>M</span>
           </div>
           <div>
             <div style={{ fontWeight: '800', fontSize: '16px', color: '#1E3A8A', lineHeight: 1 }}>Mar Vista Law</div>
-            <div style={{ fontSize: '11px', color: '#6B7280', lineHeight: 1 }}>California Legal Resource Center</div>
+            <div style={{ fontSize: '11px', color: '#6B7280', lineHeight: 1.2 }}>{t.tagline}</div>
           </div>
         </Link>
 
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <Link href="/immigration" style={{ textDecoration: 'none', color: '#374151', fontSize: '14px', fontWeight: '500' }}>Immigration</Link>
-          <Link href="/car-accident-attorney" style={{ textDecoration: 'none', color: '#374151', fontSize: '14px', fontWeight: '500' }}>Accidents</Link>
-          <Link href="/living-trust" style={{ textDecoration: 'none', color: '#374151', fontSize: '14px', fontWeight: '500' }}>Estate Planning</Link>
-          <Link href="/contact" style={{
-            textDecoration: 'none',
-            background: '#1E3A8A',
-            color: 'white',
-            padding: '8px 18px',
+        {/* Nav links */}
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <Link href="/green-card-application/los-angeles" style={{ textDecoration: 'none', color: '#374151', fontSize: '14px', fontWeight: '500' }}>
+            {t.immigration}
+          </Link>
+          <Link href="/car-accident-attorney/los-angeles" style={{ textDecoration: 'none', color: '#374151', fontSize: '14px', fontWeight: '500' }}>
+            {t.accidents}
+          </Link>
+          <Link href="/living-trust/los-angeles" style={{ textDecoration: 'none', color: '#374151', fontSize: '14px', fontWeight: '500' }}>
+            {t.estate}
+          </Link>
+
+          {/* Language toggle */}
+          <div style={{
+            display: 'flex',
+            border: '1.5px solid #E5E7EB',
             borderRadius: '8px',
-            fontSize: '14px',
-            fontWeight: '600',
-          }}>Free Consultation</Link>
+            overflow: 'hidden',
+            fontSize: '13px',
+            fontWeight: '700',
+          }}>
+            <button
+              onClick={() => setLang('en')}
+              style={{
+                padding: '6px 12px',
+                border: 'none',
+                cursor: 'pointer',
+                background: lang === 'en' ? '#1E3A8A' : 'white',
+                color: lang === 'en' ? 'white' : '#6B7280',
+                transition: 'all 0.15s',
+              }}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLang('es')}
+              style={{
+                padding: '6px 12px',
+                border: 'none',
+                borderLeft: '1.5px solid #E5E7EB',
+                cursor: 'pointer',
+                background: lang === 'es' ? '#1E3A8A' : 'white',
+                color: lang === 'es' ? 'white' : '#6B7280',
+                transition: 'all 0.15s',
+              }}
+            >
+              ES
+            </button>
+          </div>
+
+          {/* CTA */}
+          <a
+            href="tel:+1[PHONE-MARVISTALAW]"
+            style={{
+              textDecoration: 'none',
+              background: '#1E3A8A',
+              color: 'white',
+              padding: '9px 18px',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '700',
+            }}
+          >
+            {t.cta}
+          </a>
         </div>
       </div>
     </nav>
