@@ -104,7 +104,7 @@ export default function LeadForm({ service, city, county }) {
         )}
       </div>
 
-      <p style={{ fontSize: '11px', opacity: 0.6, marginTop: '14px', textAlign: 'center' }}>
+      <p style={{ fontSize: '11px', opacity: 1, marginTop: '14px', textAlign: 'center' }}>
         {t.disclaimer}
       </p>
     </div>
