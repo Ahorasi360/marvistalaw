@@ -210,34 +210,7 @@ const CA_CITIES = [
 ];
 
 // For the generator script — deduplicate and use unique slugs
-const CITIES = CA_CITIES.filter((c, i, arr) => arr.findIndex(x => x.slug === c.slug) === i);
 
-const CA_COUNTIES = [
-  { name: 'Los Angeles County', slug: 'los-angeles-county', cities: 88 },
-  { name: 'San Diego County', slug: 'san-diego-county', cities: 18 },
-  { name: 'Orange County', slug: 'orange-county', cities: 34 },
-  { name: 'Riverside County', slug: 'riverside-county', cities: 28 },
-  { name: 'San Bernardino County', slug: 'san-bernardino-county', cities: 24 },
-  { name: 'Santa Clara County', slug: 'santa-clara-county', cities: 15 },
-  { name: 'Alameda County', slug: 'alameda-county', cities: 14 },
-  { name: 'Sacramento County', slug: 'sacramento-county', cities: 8 },
-  { name: 'Contra Costa County', slug: 'contra-costa-county', cities: 19 },
-  { name: 'Fresno County', slug: 'fresno-county', cities: 15 },
-  { name: 'Kern County', slug: 'kern-county', cities: 8 },
-  { name: 'San Joaquin County', slug: 'san-joaquin-county', cities: 9 },
-  { name: 'Ventura County', slug: 'ventura-county', cities: 10 },
-  { name: 'San Mateo County', slug: 'san-mateo-county', cities: 20 },
-  { name: 'Stanislaus County', slug: 'stanislaus-county', cities: 9 },
-  { name: 'Solano County', slug: 'solano-county', cities: 7 },
-  { name: 'Tulare County', slug: 'tulare-county', cities: 9 },
-  { name: 'Sonoma County', slug: 'sonoma-county', cities: 9 },
-  { name: 'Marin County', slug: 'marin-county', cities: 11 },
-  { name: 'Santa Barbara County', slug: 'santa-barbara-county', cities: 8 },
-];
-
-module.exports = { SERVICES, CATEGORIES, CITIES, CA_CITIES, CA_COUNTIES };
-
-// Extended cities list
 const CITIES = [
   {
     "city": "Los Angeles",
@@ -3552,5 +3525,4 @@ const CITIES = [
   }
 ];
 
-// Override
-module.exports = { SERVICES: module.exports.SERVICES || SERVICES, CATEGORIES: module.exports.CATEGORIES || CATEGORIES, CITIES, CA_CITIES: CITIES, CA_COUNTIES: module.exports.CA_COUNTIES || CA_COUNTIES };
+module.exports = { SERVICES, CATEGORIES, CITIES, CA_CITIES: CITIES, CA_COUNTIES: [] };
