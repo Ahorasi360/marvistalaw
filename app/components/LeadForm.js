@@ -74,7 +74,7 @@ export default function LeadForm({ service, city, county }) {
         <select
           value={form.language}
           onChange={e => setForm(p => ({ ...p, language: e.target.value }))}
-          style={{ ...inputStyle, color: '#1E3A8A', background: 'white' }}
+          style={{ ...inputStyle, color: 'white', background: 'white' }}
         >
           <option value="es">{t.langEs}</option>
           <option value="en">{t.langEn}</option>
@@ -85,14 +85,14 @@ export default function LeadForm({ service, city, county }) {
           disabled={!form.name || !form.phone || status === 'loading'}
           style={{
             background: '#F59E0B',
-            color: '#1E3A8A',
+            color: 'white',
             border: 'none',
             borderRadius: '8px',
             padding: '14px',
             fontWeight: '700',
             fontSize: '16px',
             cursor: form.name && form.phone ? 'pointer' : 'default',
-            opacity: form.name && form.phone ? 1 : 0.6,
+            opacity: 1,
             marginTop: '4px',
           }}
         >
@@ -116,7 +116,7 @@ const inputStyle = {
   border: '1px solid #BFDBFE',
   borderRadius: '8px',
   padding: '12px 14px',
-  color: '#1E3A8A',
+  color: 'white',
   fontSize: '15px',
   width: '100%',
   outline: 'none',
