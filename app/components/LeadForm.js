@@ -1,10 +1,13 @@
 'use client';
 // app/components/LeadForm.js
 import { useState } from 'react';
+import { useLang, T } from '../lib/LanguageContext';
 
 export default function LeadForm({ service, city, county }) {
-  const [form, setForm] = useState({ name: '', phone: '', email: '', language: 'es', budget: '' });
-  const [status, setStatus] = useState(null); // null | 'loading' | 'success' | 'error'
+  const { lang } = useLang();
+  const t = T[lang].form;
+  const [form, setForm] = useState({ name: '', phone: '', email: '', language: lang === 'es' ? 'es' : 'en' });
+  const [status, setStatus] = useState(null);
 
   const handleSubmit = async () => {
     if (!form.name || !form.phone) return;
@@ -13,13 +16,16 @@ export default function LeadForm({ service, city, county }) {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, service: service.name, serviceSlug: service.slug, city, county, leadPrice: service.leadPrice }),
+        body: JSON.stringify({
+          ...form,
+          service: service.name,
+          serviceSlug: service.slug,
+          city,
+          county,
+          leadPrice: service.leadPrice,
+        }),
       });
-      if (res.ok) {
-        setStatus('success');
-      } else {
-        setStatus('error');
-      }
+      setStatus(res.ok ? 'success' : 'error');
     } catch {
       setStatus('error');
     }
@@ -29,8 +35,8 @@ export default function LeadForm({ service, city, county }) {
     return (
       <div style={{ background: '#ECFDF5', border: '1px solid #6EE7B7', borderRadius: '12px', padding: '32px', textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '12px' }}>✅</div>
-        <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#065F46', marginBottom: '8px' }}>We received your request!</h3>
-        <p style={{ color: '#047857' }}>A specialist will contact you within 24 hours. We speak Spanish and English.</p>
+        <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#065F46', marginBottom: '8px' }}>{t.successTitle}</h3>
+        <p style={{ color: '#047857', lineHeight: 1.6 }}>{t.successBody}</p>
       </div>
     );
   }
@@ -38,30 +44,28 @@ export default function LeadForm({ service, city, county }) {
   return (
     <div style={{ background: '#1E3A8A', borderRadius: '12px', padding: '28px', color: 'white' }}>
       <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '6px' }}>
-        Free Consultation — {service.name}
+        {t.title} — {service.name}
       </h3>
-      <p style={{ fontSize: '14px', opacity: 0.85, marginBottom: '20px' }}>
-        {service.category === 'injury'
-          ? 'No upfront fees. We only get paid if you win. Bilingual attorneys.'
-          : `Connect with an experienced ${city} attorney. 100% confidential.`}
+      <p style={{ fontSize: '14px', opacity: 0.85, marginBottom: '20px', lineHeight: 1.5 }}>
+        {service.category === 'injury' ? t.injury : t.general}
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <input
-          placeholder="Full name *"
+          placeholder={t.name}
           value={form.name}
           onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
           style={inputStyle}
         />
         <input
-          placeholder="Phone number *"
+          placeholder={t.phone}
           value={form.phone}
           onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
           style={inputStyle}
           type="tel"
         />
         <input
-          placeholder="Email (optional)"
+          placeholder={t.email}
           value={form.email}
           onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
           style={inputStyle}
@@ -70,10 +74,10 @@ export default function LeadForm({ service, city, county }) {
         <select
           value={form.language}
           onChange={e => setForm(p => ({ ...p, language: e.target.value }))}
-          style={{ ...inputStyle, color: '#1E3A8A' }}
+          style={{ ...inputStyle, color: '#1E3A8A', background: 'white' }}
         >
-          <option value="es">Prefiero español</option>
-          <option value="en">I prefer English</option>
+          <option value="es">{t.langEs}</option>
+          <option value="en">{t.langEn}</option>
         </select>
 
         <button
@@ -92,18 +96,16 @@ export default function LeadForm({ service, city, county }) {
             marginTop: '4px',
           }}
         >
-          {status === 'loading' ? 'Sending...' : '📞 Request Free Consultation'}
+          {status === 'loading' ? t.sending : t.submit}
         </button>
 
         {status === 'error' && (
-          <p style={{ fontSize: '13px', color: '#FCA5A5', textAlign: 'center' }}>
-            Something went wrong. Please call us directly.
-          </p>
+          <p style={{ fontSize: '13px', color: '#FCA5A5', textAlign: 'center' }}>{t.errorMsg}</p>
         )}
       </div>
 
       <p style={{ fontSize: '11px', opacity: 0.6, marginTop: '14px', textAlign: 'center' }}>
-        🔒 Your information is 100% confidential · Bilingual service · No spam
+        {t.disclaimer}
       </p>
     </div>
   );
