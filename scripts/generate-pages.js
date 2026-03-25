@@ -11,7 +11,7 @@ const { createClient } = require('@supabase/supabase-js');
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const CONCURRENCY = 40; // 40 parallel requests — safe within Anthropic rate limits
+const CONCURRENCY = 10; // 40 parallel requests — safe within Anthropic rate limits
 const MODEL = 'claude-haiku-4-5-20251001'; // Haiku = fast + cheap for bulk generation
 const MAX_TOKENS = 1800;
 
