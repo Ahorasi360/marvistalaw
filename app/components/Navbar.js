@@ -80,7 +80,7 @@ export default function Navbar() {
 
           {/* CTA */}
           <a
-            href="tel:+1[PHONE-MARVISTALAW]"
+            href="tel:+13234182252"
             style={{
               textDecoration: 'none',
               background: '#1E3A8A',
