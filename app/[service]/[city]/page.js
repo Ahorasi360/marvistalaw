@@ -6,18 +6,31 @@ import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import LeadForm from '../../components/LeadForm';
 import CityPageClient from '../../components/CityPageClient';
-import { supabase } from '../../lib/supabase';
 import { SERVICES, CITIES } from '../../lib/data';
+
+const SUPABASE_URL = 'https://wwaovysvcsesahcltuai.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YW92eXN2Y3Nlc2FoY2x0dWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMjgxNDMsImV4cCI6MjA4NDYwNDE0M30.Ev5d1Dd_BDIsuRkMqWKnz6GQ2JMi26gIX4KC3eob-2w';
+
+async function getPageContent(citySlug, serviceSlug) {
+  try {
+    const url = \`\${SUPABASE_URL}/rest/v1/marvistalaw_pages?city_slug=eq.\${citySlug}&service_slug=eq.\${serviceSlug}&select=content&limit=1\`;
+    const res = await fetch(url, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': \`Bearer \${SUPABASE_KEY}\` },
+      cache: 'no-store'
+    });
+    if (!res.ok) return null;
+    const rows = await res.json();
+    return rows[0]?.content || null;
+  } catch(e) {
+    console.error('Supabase fetch error:', e.message);
+    return null;
+  }
+}
 
 export const dynamic = 'force-dynamic'; // Always fetch fresh from Supabase
 
 export async function generateMetadata({ params }) {
-  const { data } = await supabase
-    .from('marvistalaw_pages')
-    .select('content')
-    .eq('city_slug', params.city)
-    .eq('service_slug', params.service)
-    .single();
+  const data = { content: await getPageContent(params.city, params.service) };
 
   const service = SERVICES.find(s => s.slug === params.service);
   const city = CITIES.find(c => c.slug === params.city);
@@ -36,14 +49,7 @@ export default async function CityServicePage({ params }) {
   const cityData = CITIES.find(c => c.slug === params.city);
   if (!service || !cityData) notFound();
 
-  const { data: pageData } = await supabase
-    .from('marvistalaw_pages')
-    .select('content')
-    .eq('city_slug', params.city)
-    .eq('service_slug', params.service)
-    .single();
-
-  const content = pageData?.content || null;
+  const content = await getPageContent(params.city, params.service);
 
   const relatedCities = CITIES
     .filter(c => c.county === cityData.county && c.slug !== params.city)
