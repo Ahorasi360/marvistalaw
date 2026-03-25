@@ -82,7 +82,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
           {/* City photo */}
           <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', height: '280px', background: '#E5E7EB', position: 'relative' }}>
             <Image
-              src={`https://picsum.photos/seed/${cityData.slug}/1200/400`}
+              src={`https://source.unsplash.com/1200x400/?${encodeURIComponent(cityData.city)},california`}
               alt={`${cityData.city}, California`}
               fill
               style={{ objectFit: 'cover' }}
