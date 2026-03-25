@@ -93,6 +93,8 @@ export default async function CityServicePage({ params }) {
         content={content}
         relatedCities={relatedCities}
         relatedServices={relatedServices}
+        serviceSlug={params.service}
+        citySlug={params.city}
       />
     </>
   );
