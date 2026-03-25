@@ -9,7 +9,7 @@ import CityPageClient from '../../components/CityPageClient';
 import { supabase } from '../../lib/supabase';
 import { SERVICES, CITIES } from '../../lib/data';
 
-export const revalidate = 86400 * 30;
+export const revalidate = 3600; // Revalidate every hour
 
 export async function generateMetadata({ params }) {
   const { data } = await supabase
