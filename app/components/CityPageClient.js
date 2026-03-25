@@ -212,6 +212,44 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
         </div>
       </div>
 
+      {/* MS360 DIY Promo Section */}
+      {service.ms360Path && (
+        <div style={{ background: '#EFF6FF', borderTop: '4px solid #F59E0B', padding: '48px 16px' }}>
+          <div style={{ maxWidth: '860px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr auto', gap: '32px', alignItems: 'center' }}>
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: '700', color: '#F59E0B', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
+                💡 {lang === 'es' ? '¿Prefiere hacerlo usted mismo?' : 'Prefer the DIY route?'}
+              </div>
+              <h2 style={{ fontSize: '26px', fontWeight: '800', color: '#1E3A8A', marginBottom: '12px', lineHeight: 1.2 }}>
+                {lang === 'es'
+                  ? `Prepare su ${service.nameEs} en línea — sin abogado`
+                  : `Prepare your ${service.name} online — no attorney needed`}
+              </h2>
+              <p style={{ fontSize: '16px', color: '#374151', lineHeight: 1.65, marginBottom: '0' }}>
+                {lang === 'es'
+                  ? `Multi Servicios 360 es una plataforma bilingüe de autoayuda. Usted prepara sus propios documentos con herramientas guiadas. Desde $${service.ms360Price} — ahorra hasta $${(service.attorneyMin * 2 - service.ms360Price).toLocaleString()} vs. contratar un abogado.`
+                  : `Multi Servicios 360 is a bilingual self-help platform. You prepare your own documents using guided tools. From $${service.ms360Price} — save up to $${(service.attorneyMin * 2 - service.ms360Price).toLocaleString()} vs. hiring an attorney.`}
+              </p>
+            </div>
+            <div style={{ textAlign: 'center', flexShrink: 0 }}>
+              <div style={{ fontSize: '28px', fontWeight: '800', color: '#1E3A8A', marginBottom: '4px' }}>desde ${service.ms360Price}</div>
+              <div style={{ fontSize: '13px', color: '#6B7280', marginBottom: '16px' }}>
+                {lang === 'es' ? 'vs. abogado $' : 'vs. attorney $'}{service.attorneyMin?.toLocaleString()}+
+              </div>
+              <a
+                href={`https://multiservicios360.net${service.ms360Path}`}
+                target="_blank"
+                rel="noopener"
+                style={{ display: 'inline-block', background: '#1E3A8A', color: 'white', padding: '14px 28px', borderRadius: '10px', textDecoration: 'none', fontWeight: '700', fontSize: '15px', whiteSpace: 'nowrap' }}
+              >
+                {lang === 'es' ? '🖥️ Empezar en MS360 →' : '🖥️ Start on MS360 →'}
+              </a>
+              <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '8px' }}>multiservicios360.net</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Bottom CTA */}
       <div style={{ background: '#1E3A8A', color: 'white', padding: '48px 16px', textAlign: 'center' }}>
         <h2 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '12px' }}>
