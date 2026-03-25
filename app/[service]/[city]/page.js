@@ -13,9 +13,9 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 async function getPageContent(citySlug, serviceSlug) {
   try {
-    const url = \`\${SUPABASE_URL}/rest/v1/marvistalaw_pages?city_slug=eq.\${citySlug}&service_slug=eq.\${serviceSlug}&select=content&limit=1\`;
+    const url = `\${SUPABASE_URL}/rest/v1/marvistalaw_pages?city_slug=eq.\${citySlug}&service_slug=eq.\${serviceSlug}&select=content&limit=1`;
     const res = await fetch(url, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': \`Bearer \${SUPABASE_KEY}\` },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer \${SUPABASE_KEY}` },
       cache: 'no-store'
     });
     if (!res.ok) return null;
