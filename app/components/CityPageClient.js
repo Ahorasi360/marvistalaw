@@ -8,7 +8,8 @@ import LeadForm from './LeadForm';
 import { useLang, T } from '../lib/LanguageContext';
 import { CATEGORIES } from '../lib/data';
 
-const PHONE = '[PHONE-MARVISTALAW]';
+const PHONE = '(323) 418-2252';
+const PHONE_TEL = 'tel:+13234182252';
 
 const CITY_PHOTOS = [
   '1534430480872-3498386e7856',
@@ -222,7 +223,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
             : 'Connect with an experienced California attorney today. Free consultation, bilingual service.')}
         </p>
         <a
-          href={`tel:+1${PHONE}`}
+          href={PHONE_TEL}
           style={{ display: 'inline-block', background: '#F59E0B', color: '#1E3A8A', padding: '14px 32px', borderRadius: '10px', fontWeight: '800', fontSize: '18px', textDecoration: 'none' }}
         >
           {t.callNow}: {PHONE}
