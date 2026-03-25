@@ -5,7 +5,8 @@ import Navbar from './components/Navbar';
 import { useLang, T } from './lib/LanguageContext';
 import { SERVICES } from './lib/data';
 
-const PHONE = '[PHONE-MARVISTALAW]'; // Replace with your Google Voice number
+const PHONE = '(323) 418-2252';
+const PHONE_TEL = 'tel:+13234182252'; // Replace with your Google Voice number
 
 const FEATURED = [
   { slug: 'car-accident-attorney',      emoji: '🚗', highlightEn: 'No upfront fees',    highlightEs: 'Sin costo por adelantado' },
@@ -47,7 +48,7 @@ export default function HomePage() {
             {t.hero.subtitle}
           </p>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href={`tel:+1${PHONE}`} style={{ background: '#F59E0B', color: '#1E3A8A', padding: '16px 32px', borderRadius: '10px', fontWeight: '800', fontSize: '18px', textDecoration: 'none' }}>
+            <a href={PHONE_TEL} style={{ background: '#F59E0B', color: '#1E3A8A', padding: '16px 32px', borderRadius: '10px', fontWeight: '800', fontSize: '18px', textDecoration: 'none' }}>
               {t.hero.ctaPrimary}
             </a>
             <Link href={`/car-accident-attorney/los-angeles`} style={{ background: 'rgba(255,255,255,0.15)', color: 'white', padding: '16px 32px', borderRadius: '10px', fontWeight: '700', fontSize: '18px', textDecoration: 'none', border: '2px solid rgba(255,255,255,0.4)' }}>
@@ -132,7 +133,7 @@ export default function HomePage() {
           {lang === 'es' ? 'Llámanos ahora — servicio bilingüe, consulta gratis.' : 'Call us now — bilingual service, free consultation.'}
         </p>
         <a
-          href={`tel:+1${PHONE}`}
+          href={PHONE_TEL}
           style={{ display: 'inline-block', background: '#F59E0B', color: '#1E3A8A', padding: '14px 36px', borderRadius: '10px', fontWeight: '800', fontSize: '20px', textDecoration: 'none' }}
         >
           📞 {PHONE}
