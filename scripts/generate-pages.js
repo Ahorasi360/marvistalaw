@@ -1,8 +1,7 @@
 #!/usr/bin/env node
-// scripts/generate-pages.js — uses Node.js built-in https (no fetch needed)
+// scripts/generate-pages.js — uses ONLY Node.js built-in https, no fetch anywhere
 
 const https = require('https');
-const { createClient } = require('@supabase/supabase-js');
 const { SERVICES, CITIES } = require('./data-cjs.js');
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
@@ -13,48 +12,90 @@ const MODEL = 'claude-haiku-4-5-20251001';
 
 if (!ANTHROPIC_KEY || !SUPABASE_URL || !SUPABASE_KEY) {
   console.error('❌ Missing env vars!');
-  console.error('  ANTHROPIC_API_KEY:', !!ANTHROPIC_KEY);
-  console.error('  NEXT_PUBLIC_SUPABASE_URL:', !!SUPABASE_URL);
-  console.error('  SUPABASE_SERVICE_ROLE_KEY:', !!SUPABASE_KEY);
   process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Parse hostname from URL
+const SUPABASE_HOST = SUPABASE_URL.replace('https://', '').replace('http://', '').split('/')[0];
 
-// ── HTTP request using built-in https module ──────────────────────────────────
-function httpsPost(hostname, path, headers, body) {
+// ── Generic HTTPS request ─────────────────────────────────────────────────────
+function httpsReq(method, hostname, path, headers, body) {
   return new Promise((resolve, reject) => {
-    const postData = JSON.stringify(body);
-    const options = {
-      hostname,
-      port: 443,
-      path,
-      method: 'POST',
+    const postData = body ? JSON.stringify(body) : null;
+    const opts = {
+      hostname, port: 443, path, method,
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData),
+        ...(postData ? { 'Content-Length': Buffer.byteLength(postData) } : {}),
         ...headers,
       },
     };
-
-    const req = https.request(options, (res) => {
+    const req = https.request(opts, (res) => {
       let data = '';
-      res.on('data', chunk => data += chunk);
+      res.on('data', c => data += c);
       res.on('end', () => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          try { resolve(JSON.parse(data)); }
-          catch (e) { reject(new Error(`JSON parse error: ${data.slice(0, 100)}`)); }
+          try { resolve({ body: JSON.parse(data), status: res.statusCode }); }
+          catch { resolve({ body: data, status: res.statusCode }); }
         } else {
           reject(new Error(`HTTP ${res.statusCode}: ${data.slice(0, 200)}`));
         }
       });
     });
-
     req.on('error', reject);
-    req.setTimeout(60000, () => { req.destroy(); reject(new Error('Request timeout')); });
-    req.write(postData);
+    req.setTimeout(60000, () => { req.destroy(); reject(new Error('Timeout')); });
+    if (postData) req.write(postData);
     req.end();
   });
+}
+
+// ── Supabase REST API (no SDK) ────────────────────────────────────────────────
+async function supabaseQuery(path, method = 'GET', body = null, extraHeaders = {}) {
+  return httpsReq(method, SUPABASE_HOST, `/rest/v1${path}`, {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Prefer': 'return=minimal',
+    ...extraHeaders,
+  }, body);
+}
+
+async function supabaseSelect(table, columns, filters = {}) {
+  let qs = `select=${columns}`;
+  for (const [k, v] of Object.entries(filters)) qs += `&${k}=eq.${v}`;
+  const r = await httpsReq('GET', SUPABASE_HOST, `/rest/v1/${table}?${qs}`, {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Accept': 'application/json',
+  });
+  return r.body;
+}
+
+async function supabaseUpsert(table, data) {
+  return httpsReq('POST', SUPABASE_HOST, `/rest/v1/${table}`, {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Prefer': 'resolution=merge-duplicates,return=minimal',
+    'Content-Type': 'application/json',
+  }, data);
+}
+
+// ── Anthropic API ─────────────────────────────────────────────────────────────
+async function callAnthropic(prompt) {
+  const r = await httpsReq('POST', 'api.anthropic.com', '/v1/messages', {
+    'x-api-key': ANTHROPIC_KEY,
+    'anthropic-version': '2023-06-01',
+  }, {
+    model: MODEL,
+    max_tokens: 1800,
+    messages: [{ role: 'user', content: prompt }],
+  });
+  const text = r.body.content?.[0]?.text || '';
+  try { return JSON.parse(text); }
+  catch {
+    const m = text.match(/\{[\s\S]*\}/);
+    if (m) return JSON.parse(m[0]);
+    throw new Error('No JSON in response');
+  }
 }
 
 // ── Build prompt ──────────────────────────────────────────────────────────────
@@ -66,76 +107,15 @@ function buildPrompt({ city, service }) {
 PAGE: ${service.name} in ${city.city}, California (${city.county} County)
 COURTHOUSE: ${city.courthouse}
 ${hasDIY ? `DIY OPTION: multiservicios360.net${service.ms360Path} from $${service.ms360Price}` : ''}
-${isInjury ? 'FEE: Contingency, no upfront cost, 33% of settlement.' : `ATTORNEY COST: $${service.attorneyMin}+`}
+${isInjury ? 'FEE: Contingency, no upfront cost.' : `ATTORNEY COST: $${service.attorneyMin}+`}
 
 Return this JSON:
-{"metaTitle":"under 60 chars with service+city","metaDescription":"under 155 chars","h1":"unique h1 under 65 chars","intro":"130-160 words about ${service.name} in ${city.city} CA","whatItIs":"150-180 words explaining ${service.name} in California","localContext":"100-120 words mentioning ${city.courthouse} and local procedures","costComparison":"80-100 words on cost${isInjury ? ', contingency fees' : ''}","faqs":[{"q":"How long does this take in ${city.county} County?","a":"60-70 words"},{"q":"${isInjury ? 'What is my case worth?' : 'Do I need an attorney?'}","a":"60-70 words"},{"q":"What documents do I need?","a":"60-70 words"},{"q":"What if I wait too long?","a":"60-70 words"},{"q":"How do I get started in ${city.city}?","a":"60-70 words"}],"ctaHeading":"max 8 words","ctaSubtext":"1 sentence","relatedServices":["slug1","slug2","slug3"]}`;
+{"metaTitle":"under 60 chars","metaDescription":"under 155 chars","h1":"unique h1 under 65 chars","intro":"130-160 words about ${service.name} in ${city.city} CA","whatItIs":"150-180 words explaining ${service.name} in California","localContext":"100-120 words mentioning ${city.courthouse}","costComparison":"80-100 words on cost","faqs":[{"q":"How long in ${city.county} County?","a":"60-70 words"},{"q":"Do I need an attorney?","a":"60-70 words"},{"q":"What documents do I need?","a":"60-70 words"},{"q":"What if I wait too long?","a":"60-70 words"},{"q":"How to get started in ${city.city}?","a":"60-70 words"}],"ctaHeading":"max 8 words","ctaSubtext":"1 sentence","relatedServices":["slug1","slug2"]}`;
 }
 
-// ── Call Anthropic API ────────────────────────────────────────────────────────
-async function generatePage({ city, service }, retries = 3) {
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const data = await httpsPost(
-        'api.anthropic.com',
-        '/v1/messages',
-        {
-          'x-api-key': ANTHROPIC_KEY,
-          'anthropic-version': '2023-06-01',
-        },
-        {
-          model: MODEL,
-          max_tokens: 1800,
-          messages: [{ role: 'user', content: buildPrompt({ city, service }) }],
-        }
-      );
-
-      const text = data.content?.[0]?.text || '';
-      try {
-        return JSON.parse(text);
-      } catch {
-        const match = text.match(/\{[\s\S]*\}/);
-        if (match) return JSON.parse(match[0]);
-        throw new Error('No JSON in response');
-      }
-    } catch (err) {
-      if (attempt === retries) throw err;
-      const wait = err.message.includes('529') || err.message.includes('429') ? 15000 : 3000;
-      process.stdout.write(`\n  Retry ${attempt} for ${city.city}/${service.slug} (${err.message.slice(0,50)})...`);
-      await new Promise(r => setTimeout(r, wait));
-    }
-  }
-}
-
-// ── Save to Supabase ──────────────────────────────────────────────────────────
-async function savePage({ city, service, content }) {
-  const { error } = await supabase
-    .from('marvistalaw_pages')
-    .upsert({
-      city_slug: city.slug,
-      service_slug: service.slug,
-      city_name: city.city,
-      county: city.county,
-      county_slug: city.countySlug,
-      service_name: service.name,
-      service_category: service.category,
-      lead_price: service.leadPrice,
-      ms360_path: service.ms360Path,
-      ms360_price: service.ms360Price,
-      lat: city.lat,
-      lng: city.lng,
-      courthouse: city.courthouse,
-      recorder: city.recorder,
-      content,
-      generated_at: new Date().toISOString(),
-    }, { onConflict: 'city_slug,service_slug' });
-  if (error) throw error;
-}
-
-// ── Concurrency limiter ───────────────────────────────────────────────────────
+// ── p-limit ───────────────────────────────────────────────────────────────────
 function pLimit(n) {
-  let running = 0;
-  const queue = [];
+  let running = 0; const queue = [];
   function run() {
     if (running >= n || !queue.length) return;
     const { fn, resolve, reject } = queue.shift();
@@ -147,51 +127,48 @@ function pLimit(n) {
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log('\n🚀 MarVistaLaw Page Generator');
-  console.log('================================');
-  console.log(`Model: ${MODEL} | Concurrency: ${CONCURRENCY}`);
+  console.log('\n🚀 MarVistaLaw Page Generator v3 (https only)');
+  console.log('==============================================');
+  console.log(`Supabase host: ${SUPABASE_HOST}`);
 
-  // Test Anthropic connection first
-  console.log('\nTesting Anthropic API connection...');
+  // Test connections
+  console.log('\nTesting Anthropic...');
   try {
-    await httpsPost('api.anthropic.com', '/v1/messages',
+    await httpsReq('POST', 'api.anthropic.com', '/v1/messages',
       { 'x-api-key': ANTHROPIC_KEY, 'anthropic-version': '2023-06-01' },
-      { model: MODEL, max_tokens: 10, messages: [{ role: 'user', content: 'Say OK' }] }
+      { model: MODEL, max_tokens: 5, messages: [{ role: 'user', content: 'Hi' }] }
     );
-    console.log('✅ Anthropic API connected!');
-  } catch (err) {
-    console.error('❌ Cannot reach Anthropic API:', err.message);
-    process.exit(1);
-  }
+    console.log('✅ Anthropic OK');
+  } catch (e) { console.error('❌ Anthropic:', e.message); process.exit(1); }
 
-  // Test Supabase connection
-  console.log('Testing Supabase connection...');
-  const { error: dbErr } = await supabase.from('marvistalaw_pages').select('count').limit(1);
-  if (dbErr) {
-    console.error('❌ Supabase error:', dbErr.message);
-    process.exit(1);
-  }
-  console.log('✅ Supabase connected!\n');
+  console.log('Testing Supabase...');
+  try {
+    const r = await supabaseSelect('marvistalaw_pages', 'count', {});
+    console.log('✅ Supabase OK, response type:', typeof r);
+  } catch (e) { console.error('❌ Supabase:', e.message); process.exit(1); }
+
+  // Get existing pages
+  console.log('Loading existing pages...');
+  let existing = [];
+  try {
+    existing = await supabaseSelect('marvistalaw_pages', 'city_slug,service_slug', {});
+    if (!Array.isArray(existing)) existing = [];
+  } catch (e) { console.log('No existing pages yet'); }
+
+  const done = new Set(existing.map(r => `${r.city_slug}__${r.service_slug}`));
 
   // Build queue
-  const queue = [];
+  const todo = [];
   for (const city of CITIES) {
     for (const service of SERVICES) {
-      queue.push({ city, service });
+      if (!done.has(`${city.slug}__${service.slug}`)) {
+        todo.push({ city, service });
+      }
     }
   }
 
-  // Check existing
-  const { data: existing } = await supabase
-    .from('marvistalaw_pages')
-    .select('city_slug,service_slug');
-  const done = new Set((existing || []).map(r => `${r.city_slug}__${r.service_slug}`));
-
-  const todo = queue.filter(({ city, service }) => !done.has(`${city.slug}__${service.slug}`));
-
-  console.log(`Total: ${queue.length.toLocaleString()} | Done: ${done.size.toLocaleString()} | To generate: ${todo.length.toLocaleString()}`);
-
-  if (!todo.length) { console.log('\n✅ All pages done!'); return; }
+  console.log(`\nTotal: ${CITIES.length * SERVICES.length} | Done: ${done.size} | To generate: ${todo.length}\n`);
+  if (!todo.length) { console.log('✅ All done!'); return; }
 
   const limit = pLimit(CONCURRENCY);
   let completed = 0, errors = 0;
@@ -199,26 +176,39 @@ async function main() {
 
   const tasks = todo.map(({ city, service }) =>
     limit(async () => {
-      try {
-        const content = await generatePage({ city, service });
-        await savePage({ city, service, content });
-        completed++;
-        if (completed % 10 === 0) {
-          const rate = completed / ((Date.now() - start) / 1000);
-          const eta = Math.round((todo.length - completed) / rate / 3600 * 10) / 10;
-          const pct = Math.round(completed / todo.length * 100);
-          process.stdout.write(`\r[${pct}%] ${completed.toLocaleString()}/${todo.length.toLocaleString()} | ${Math.round(rate)}/s | ETA: ${eta}h | Errors: ${errors}  `);
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          const content = await callAnthropic(buildPrompt({ city, service }));
+          await supabaseUpsert('marvistalaw_pages', {
+            city_slug: city.slug, service_slug: service.slug,
+            city_name: city.city, county: city.county, county_slug: city.countySlug,
+            service_name: service.name, service_category: service.category,
+            lead_price: service.leadPrice, ms360_path: service.ms360Path, ms360_price: service.ms360Price,
+            lat: city.lat, lng: city.lng, courthouse: city.courthouse, recorder: city.recorder,
+            content, generated_at: new Date().toISOString(),
+          });
+          completed++;
+          if (completed % 10 === 0) {
+            const rate = completed / ((Date.now() - start) / 1000);
+            const eta = ((todo.length - completed) / rate / 3600).toFixed(1);
+            const pct = Math.round(completed / todo.length * 100);
+            process.stdout.write(`\r[${pct}%] ${completed}/${todo.length} | ${Math.round(rate)}/s | ETA: ${eta}h | ❌ ${errors}  `);
+          }
+          return;
+        } catch (e) {
+          if (attempt === 3) {
+            errors++;
+            process.stdout.write(`\n❌ ${city.city}/${service.slug}: ${e.message.slice(0,60)}\n`);
+          } else {
+            await new Promise(r => setTimeout(r, 3000 * attempt));
+          }
         }
-      } catch (err) {
-        errors++;
-        process.stdout.write(`\n❌ ${city.city}/${service.slug}: ${err.message.slice(0, 60)}`);
       }
     })
   );
 
   await Promise.all(tasks);
-  const hrs = ((Date.now() - start) / 3600000).toFixed(1);
-  console.log(`\n\n✅ Done! ${completed.toLocaleString()} pages in ${hrs}h | ${errors} errors`);
+  console.log(`\n\n✅ Done! ${completed} pages in ${((Date.now()-start)/3600000).toFixed(1)}h | ${errors} errors`);
 }
 
-main().catch(err => { console.error('Fatal:', err); process.exit(1); });
+main().catch(e => { console.error('Fatal:', e); process.exit(1); });
