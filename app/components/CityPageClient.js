@@ -129,7 +129,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
           {/* City photo */}
           <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', height: '280px', background: '#E5E7EB', position: 'relative' }}>
             <img
-              src={'https://images.unsplash.com/photo-' + getCityUnsplashId(cityData.city) + '?auto=format&fit=crop&w=1200&q=80'}
+              src={'https://picsum.photos/seed/' + cityData.slug + '/1200/400'}
               alt={cityData.city + ', California'}
               style={{ width: '100%', height: '280px', objectFit: 'cover', display: 'block' }}
               onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542393545-10f5cde2c810?auto=format&fit=crop&w=1200&q=80'; }}
