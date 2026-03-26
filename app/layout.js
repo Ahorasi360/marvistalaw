@@ -3,6 +3,9 @@ import './globals.css';
 import { LanguageProvider } from './lib/LanguageContext';
 
 export const metadata = {
+  verification: {
+    google: '2_HEo68CU05fpBjkkmqrlovprULjEB5POPGYx-YJKBc',
+  },
   metadataBase: new URL('https://marvistalaw.com'),
   title: { default: 'Mar Vista Law · California Legal Resource Center', template: '%s | MarVistaLaw.com' },
   description: 'Find experienced California attorneys for immigration, personal injury, estate planning, business law, and family law. Free legal resource center serving all of California. Bilingual English/Spanish.',
