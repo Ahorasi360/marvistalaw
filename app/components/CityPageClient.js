@@ -238,6 +238,14 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
           {lang === 'es' ? '¿Prefiere preparar documentos usted mismo? Visite ' : 'Prefer to prepare documents yourself? Visit '}
           <a href="https://multiservicios360.net" style={{ color: '#F59E0B' }} target="_blank" rel="noopener">multiservicios360.net</a>
         </p>
+      <div style={{ borderTop: '1px solid #1E293B', padding: '12px 16px', textAlign: 'center' }}>
+        <p style={{ color: '#6B7280', fontSize: '11px', margin: 0 }}>
+          Built by{' '}
+          <a href="https://flashpreviewsconsultinggroup.com" target="_blank" rel="noopener noreferrer" style={{ color: '#9CA3AF', textDecoration: 'none', fontWeight: '600' }}>
+            Flash Previews Consulting Group
+          </a>
+        </p>
+      </div>
       </footer>
     </>
   );
