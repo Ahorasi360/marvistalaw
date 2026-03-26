@@ -55,7 +55,7 @@ export async function POST(req) {
     const systemWithLang = SYSTEM + `\n\nCurrent site language preference: ${lang === 'es' ? 'Spanish' : 'English'}. Start in that language but always follow the user's actual language.`;
 
     const response = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-3-haiku-20240307',
       max_tokens: 400,
       system: systemWithLang,
       messages: messages.map(m => ({ role: m.role, content: m.content })),
