@@ -193,6 +193,12 @@ export default function HomePageClient() {
             <a href="https://multiservicios360.net" style={{ color: '#F59E0B' }} target="_blank" rel="noopener">multiservicios360.net</a>
           </p>
           <p style={{ fontSize: '12px', opacity: 0.4, marginTop: '12px' }}>© {new Date().getFullYear()} MarVistaLaw.com · {PHONE}</p>
+          <p style={{ fontSize: '11px', opacity: 0.35, marginTop: '8px' }}>
+            Built by{' '}
+            <a href="https://flashpreviewsconsultinggroup.com" target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'none', fontWeight: '600' }}>
+              Flash Previews Consulting Group
+            </a>
+          </p>
         </div>
       </footer>
     </>
