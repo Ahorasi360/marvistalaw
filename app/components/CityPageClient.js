@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from './Navbar';
 import LeadForm from './LeadForm';
-import { useLang, T, CATEGORIES } from '../lib/LanguageContext';
+import { useLang, T } from '../lib/LanguageContext';
 
 const PICSUM_SEEDS = {
   'los-angeles': '1000', 'san-diego': '1010', 'san-francisco': '1020',
@@ -16,6 +16,16 @@ const PICSUM_SEEDS = {
   'huntington-beach': '1210', 'santa-clarita': '1220', 'garden-grove': '1230',
   'oceanside': '1240', 'pomona': '1250', 'corona': '1260',
   'palmdale': '1270', 'lancaster': '1280', 'salinas': '1290',
+};
+
+
+const CATEGORIES = {
+  estate: { name: 'Estate Planning', nameEs: 'Planificación Patrimonial', icon: '🏛️' },
+  immigration: { name: 'Immigration Law', nameEs: 'Derecho Migratorio', icon: '🌎' },
+  injury: { name: 'Personal Injury', nameEs: 'Lesiones Personales', icon: '🚗' },
+  family: { name: 'Family Law', nameEs: 'Derecho Familiar', icon: '👨‍👩‍👧' },
+  business: { name: 'Business Law', nameEs: 'Derecho Empresarial', icon: '💼' },
+  realestate: { name: 'Real Estate', nameEs: 'Bienes Raíces', icon: '🏠' },
 };
 
 function getCityPhoto(slug) {
