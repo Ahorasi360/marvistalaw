@@ -42,7 +42,7 @@ export default function LeadForm({ service, city, county }) {
   }
 
   return (
-    <div style={{ background: '#1E3A8A', borderRadius: '12px', padding: '28px', color: '#1E3A8A' }}>
+    <div style={{ background: '#1E3A8A', borderRadius: '12px', padding: '28px', color: 'white' }}>
       <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '6px' }}>
         {t.title} — {service.name}
       </h3>
