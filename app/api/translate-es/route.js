@@ -1,5 +1,5 @@
 // app/api/translate-es/route.js
-// ONE-TIME translation batch — delete after use
+// ONE-TIME translation batch — delete after use v2
 import { NextResponse } from 'next/server';
 
 const SB_URL = 'https://wwaovysvcsesahcltuai.supabase.co';
