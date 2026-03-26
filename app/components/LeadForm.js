@@ -42,7 +42,7 @@ export default function LeadForm({ service, city, county }) {
   }
 
   return (
-    <div style={{ background: '#1E3A8A', borderRadius: '12px', padding: '28px', color: 'white' }}>
+    <div style={{ background: '#1E3A8A', borderRadius: '12px', padding: '28px', color: '#1E3A8A' }}>
       <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '6px' }}>
         {t.title} — {service.name}
       </h3>
@@ -74,7 +74,7 @@ export default function LeadForm({ service, city, county }) {
         <select
           value={form.language}
           onChange={e => setForm(p => ({ ...p, language: e.target.value }))}
-          style={{ ...inputStyle, color: 'white', background: 'white' }}
+          style={{ ...inputStyle, color: '#1E3A8A', background: 'white' }}
         >
           <option value="es">{t.langEs}</option>
           <option value="en">{t.langEn}</option>
@@ -85,7 +85,7 @@ export default function LeadForm({ service, city, county }) {
           disabled={!form.name || !form.phone || status === 'loading'}
           style={{
             background: '#F59E0B',
-            color: 'white',
+            color: '#1E3A8A',
             border: 'none',
             borderRadius: '8px',
             padding: '14px',
@@ -116,7 +116,7 @@ const inputStyle = {
   border: '1px solid #BFDBFE',
   borderRadius: '8px',
   padding: '12px 14px',
-  color: 'white',
+  color: '#1E3A8A',
   fontSize: '15px',
   width: '100%',
   outline: 'none',
