@@ -39,6 +39,9 @@ export default function Navbar() {
           <Link href="/living-trust/los-angeles" style={{ textDecoration: 'none', color: '#374151', fontSize: '14px', fontWeight: '500' }}>
             {t.estate}
           </Link>
+          <Link href="/asistente" style={{ textDecoration: 'none', color: '#F59E0B', fontSize: '14px', fontWeight: '700', background: '#FEF3C7', padding: '6px 12px', borderRadius: '8px' }}>
+            🤖 {lang === 'es' ? 'Asistente' : 'Assistant'}
+          </Link>
 
           {/* Language toggle */}
           <div style={{
