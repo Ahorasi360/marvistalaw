@@ -1,29 +1,30 @@
 // app/api/translate-es/route.js
-// ONE-TIME translation batch script — delete after use
+// ONE-TIME translation batch — delete after use
 import { NextResponse } from 'next/server';
 
-const SB_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SB_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SB_URL = 'https://wwaovysvcsesahcltuai.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3YW92eXN2Y3Nlc2FoY2x0dWFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkwMjgxNDMsImV4cCI6MjA4NDYwNDE0M30.Ev5d1Dd_BDIsuRkMqWKnz6GQ2JMi26gIX4KC3eob-2w';
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
-const BATCH = 20;
+const BATCH = 15;
 const CONCURRENCY = 5;
 
 async function sbFetch(path, opts = {}) {
   const res = await fetch(SB_URL + path, {
     ...opts,
     headers: {
-      apikey: SB_SERVICE_KEY,
-      Authorization: 'Bearer ' + SB_SERVICE_KEY,
+      apikey: SB_KEY,
+      Authorization: 'Bearer ' + SB_KEY,
       'Content-Type': 'application/json',
-      Prefer: 'return=minimal',
+      Prefer: opts.method === 'PATCH' ? 'return=minimal' : 'return=representation',
       ...opts.headers,
     },
   });
   if (!res.ok) {
     const t = await res.text();
-    throw new Error('SB error ' + res.status + ': ' + t);
+    throw new Error('SB ' + res.status + ': ' + t.substring(0, 200));
   }
-  return opts.method === 'PATCH' ? null : res.json();
+  if (opts.method === 'PATCH') return null;
+  return res.json();
 }
 
 async function translateToSpanish(content, serviceName) {
@@ -40,14 +41,9 @@ async function translateToSpanish(content, serviceName) {
     faqs: content.faqs,
   };
 
-  const prompt = `Translate the following legal content to Spanish for a California legal resource website. 
-Service: ${serviceName}
-Keep proper nouns (city names, courthouse names, company names) in English.
-Keep legal terms accurate for California/US law in Spanish.
-For faqs, translate both q and a fields.
-Return ONLY valid JSON with the same structure. No markdown, no explanation.
+  const prompt = 'Translate to Spanish for a California legal website. Service: ' + serviceName + '. Keep city/courthouse names in English. Return ONLY valid JSON same structure. No markdown.
 
-${JSON.stringify(fields)}`;
+' + JSON.stringify(fields);
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -62,91 +58,59 @@ ${JSON.stringify(fields)}`;
       messages: [{ role: 'user', content: prompt }],
     }),
   });
-
-  if (!res.ok) throw new Error('Anthropic error ' + res.status);
+  if (!res.ok) throw new Error('Anthropic ' + res.status);
   const data = await res.json();
   const text = data.content?.[0]?.text || '{}';
-  const clean = text.replace(/```json|```/g, '').trim();
-  return JSON.parse(clean);
+  return JSON.parse(text.replace(/```json|```/g, '').trim());
 }
 
 async function processRow(row) {
   try {
     if (!row.content || row.content_es) return { id: row.id, status: 'skipped' };
-    const translated = await translateToSpanish(row.content, row.service_name);
-    await sbFetch(
-      `/rest/v1/marvistalaw_pages?id=eq.${row.id}`,
-      { method: 'PATCH', body: JSON.stringify({ content_es: translated }) }
-    );
+    const translated = await translateToSpanish(row.content, row.service_name || 'legal service');
+    await sbFetch('/rest/v1/marvistalaw_pages?id=eq.' + row.id, {
+      method: 'PATCH',
+      body: JSON.stringify({ content_es: translated }),
+    });
     return { id: row.id, status: 'ok' };
   } catch (e) {
-    return { id: row.id, status: 'error', error: e.message };
+    return { id: row.id, status: 'error', error: e.message.substring(0, 100) };
   }
 }
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
-  const action = searchParams.get('action');
   const offset = parseInt(searchParams.get('offset') || '0');
 
-  // Step 1: Add column
-  if (action === 'add-column') {
-    try {
-      await sbFetch('/rest/v1/rpc/exec_sql', {
-        method: 'POST',
-        body: JSON.stringify({ query: 'ALTER TABLE marvistalaw_pages ADD COLUMN IF NOT EXISTS content_es jsonb;' }),
-      });
-      return NextResponse.json({ ok: true, message: 'Column content_es added' });
-    } catch (e) {
-      // Try direct SQL via pg_query
-      return NextResponse.json({ ok: false, error: e.message });
-    }
-  }
-
-  // Step 2: Stats
-  if (action === 'stats') {
-    const total = await sbFetch('/rest/v1/marvistalaw_pages?select=count', {
-      headers: { Prefer: 'count=exact', Range: '0-0' }
-    }).catch(() => null);
-    const done = await sbFetch('/rest/v1/marvistalaw_pages?content_es=not.is.null&select=count', {
-      headers: { Prefer: 'count=exact', Range: '0-0' }
-    }).catch(() => null);
-    return NextResponse.json({ message: 'check headers for counts' });
-  }
-
-  // Step 3: Translate batch
-  if (action === 'translate') {
+  try {
     const rows = await sbFetch(
-      `/rest/v1/marvistalaw_pages?select=id,content,service_name,content_es&content_es=is.null&content=not.is.null&limit=${BATCH}&offset=${offset}`
+      '/rest/v1/marvistalaw_pages?select=id,content,service_name,content_es&content_es=is.null&content=not.is.null&limit=' + BATCH + '&offset=' + offset
     );
 
     if (!rows || rows.length === 0) {
-      return NextResponse.json({ done: true, message: 'All rows translated!' });
+      return NextResponse.json({ done: true, message: 'All done!' });
     }
 
-    // Process in parallel batches of CONCURRENCY
     const results = [];
     for (let i = 0; i < rows.length; i += CONCURRENCY) {
       const batch = rows.slice(i, i + CONCURRENCY);
-      const batchResults = await Promise.all(batch.map(processRow));
-      results.push(...batchResults);
+      const br = await Promise.all(batch.map(processRow));
+      results.push(...br);
     }
 
     const ok = results.filter(r => r.status === 'ok').length;
-    const skipped = results.filter(r => r.status === 'skipped').length;
-    const errors = results.filter(r => r.status === 'error').length;
+    const errors = results.filter(r => r.status === 'error');
 
     return NextResponse.json({
       done: false,
       offset,
       processed: rows.length,
-      ok, skipped, errors,
+      ok,
+      errors: errors.length,
+      errors_detail: errors.slice(0, 2),
       next_offset: offset + BATCH,
-      errors_detail: results.filter(r => r.status === 'error').slice(0, 3),
     });
+  } catch (e) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
-
-  return NextResponse.json({ 
-    usage: 'GET ?action=add-column | ?action=stats | ?action=translate&offset=0' 
-  });
 }
