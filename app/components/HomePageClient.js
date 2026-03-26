@@ -50,7 +50,7 @@ export default function HomePageClient() {
             <a href={PHONE_TEL} style={{ background: '#F59E0B', color: '#1E3A8A', padding: '16px 32px', borderRadius: '10px', fontWeight: '800', fontSize: '18px', textDecoration: 'none' }}>
               {t.hero.ctaPrimary}
             </a>
-            <Link href="/car-accident-attorney/los-angeles" style={{ background: 'rgba(255,255,255,0.15)', color: 'white', padding: '16px 32px', borderRadius: '10px', fontWeight: '700', fontSize: '18px', textDecoration: 'none', border: '2px solid rgba(255,255,255,0.4)' }}>
+            <Link href="/asistente" style={{ background: 'rgba(255,255,255,0.15)', color: 'white', padding: '16px 32px', borderRadius: '10px', fontWeight: '700', fontSize: '18px', textDecoration: 'none', border: '2px solid rgba(255,255,255,0.4)' }}>
               {t.hero.ctaSecondary}
             </Link>
           </div>
