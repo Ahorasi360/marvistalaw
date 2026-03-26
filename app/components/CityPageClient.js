@@ -232,8 +232,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
 
       {/* Footer */}
       <footer style={{ background: '#111827', color: '#9CA3AF', padding: '24px 16px', textAlign: 'center', fontSize: '12px' }}>
-        <p style={{ margin: '0 0 6px', fontWeight: '600', color: 'white' }}>Mar Vista Law · California Legal Resource Center</p>
-        <p style={{ margin: '0 0 4px', fontSize: '11px', color: '#6B7280' }}>marvistalaw.com · A division of Multi Servicios 360</p>
+        <p style={{ margin: '0 0 6px', fontWeight: '600', color: 'white' }}>Mar Vista Law · California Legal Resource Center · marvistalaw.com</p>
         <p style={{ margin: '0 0 6px' }}>Mar Vista Law is a legal referral and resource service, not a law firm.</p>
         <p style={{ margin: 0 }}>
           {lang === 'es' ? '¿Prefiere preparar documentos usted mismo? Visite ' : 'Prefer to prepare documents yourself? Visit '}
