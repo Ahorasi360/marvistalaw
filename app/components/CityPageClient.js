@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 // app/components/CityPageClient.js
 // Handles the bilingual rendering of the 33,540 city+service pages
 import Link from 'next/link';
@@ -27,6 +28,13 @@ const CITY_PHOTOS = [
 
 export default function CityPageClient({ service, cityData, content, relatedCities, relatedServices, serviceSlug, citySlug }) {
   const { lang } = useLang();
+  const [isMobile, setIsMobile] = React.useState(false);
+  React.useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
   const t = T[lang].page;
   const category = CATEGORIES[service.category];
 
@@ -74,7 +82,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
       </div>
 
       {/* Main content */}
-      <div className='city-content-grid' style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', display: 'grid', gap: '24px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 340px', gap: isMobile ? '24px' : '48px' }}>
         <div>
           {/* City photo */}
           <div style={{ borderRadius: '12px', overflow: 'hidden', marginBottom: '32px', height: '280px', background: '#E5E7EB', position: 'relative' }}>
