@@ -82,6 +82,60 @@ export default function HomePageClient() {
         </div>
       </section>
 
+      
+      {/* How it works */}
+      <div style={{ background: 'white', padding: '64px 16px' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#1E3A8A', marginBottom: '12px' }}>
+            {lang === 'es' ? '¿Cómo funciona?' : 'How It Works'}
+          </h2>
+          <p style={{ fontSize: '16px', color: '#6B7280', marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px' }}>
+            {lang === 'es' ? 'Conectarte con un abogado en California nunca fue tan fácil' : 'Connecting with a California attorney has never been easier'}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '24px', justifyContent: 'center' }}>
+            {[
+              { step: '1', icon: '📝', title: lang === 'es' ? 'Cuéntanos tu caso' : 'Tell us your case', desc: lang === 'es' ? 'Llena el formulario con tu situación legal en menos de 2 minutos' : 'Fill out the form with your legal situation in under 2 minutes' },
+              { step: '2', icon: '⚖️', title: lang === 'es' ? 'Te conectamos' : 'We connect you', desc: lang === 'es' ? 'Un abogado licenciado en California te contacta en menos de 24 horas' : 'A licensed California attorney contacts you within 24 hours' },
+              { step: '3', icon: '✅', title: lang === 'es' ? 'Consulta gratis' : 'Free consultation', desc: lang === 'es' ? 'Recibe orientación profesional sin costo inicial ni compromiso' : 'Get professional guidance with no upfront cost or commitment' },
+            ].map(s => (
+              <div key={s.step} style={{ flex: '1 1 220px', maxWidth: '280px', padding: '24px', background: '#F8FAFC', borderRadius: '16px', border: '1px solid #E5E7EB' }}>
+                <div style={{ fontSize: '36px', marginBottom: '12px' }}>{s.icon}</div>
+                <div style={{ width: '28px', height: '28px', background: '#1E3A8A', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '800', fontSize: '14px', margin: '0 auto 12px' }}>{s.step}</div>
+                <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1E3A8A', marginBottom: '8px' }}>{s.title}</h3>
+                <p style={{ fontSize: '14px', color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* SEO Content */}
+      <div style={{ background: '#F8FAFC', padding: '64px 16px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#1E3A8A', marginBottom: '16px' }}>
+            {lang === 'es' ? 'Recursos Legales en California para Familias Latinas' : 'California Legal Resources for Latino Families'}
+          </h2>
+          <p style={{ fontSize: '16px', color: '#374151', lineHeight: 1.8, marginBottom: '16px' }}>
+            {lang === 'es' 
+              ? 'Mar Vista Law es el centro de recursos legales más completo para la comunidad latina en California. Cubrimos las 482 ciudades del estado, desde San Diego hasta Redding, ofreciendo acceso a abogados bilingües especializados en inmigración, accidentes de auto, planificación patrimonial y derecho familiar.'
+              : 'Mar Vista Law is the most comprehensive legal resource center for the Latino community in California. We cover all 482 cities in the state, from San Diego to Redding, providing access to bilingual attorneys specializing in immigration, car accidents, estate planning, and family law.'}
+          </p>
+          <p style={{ fontSize: '16px', color: '#374151', lineHeight: 1.8, marginBottom: '16px' }}>
+            {lang === 'es'
+              ? 'Nuestro servicio de referencia conecta a las familias californianas con abogados experimentados y licenciados por el State Bar de California. Todas las consultas iniciales son completamente gratuitas y en español o inglés, según su preferencia.'
+              : 'Our referral service connects California families with experienced attorneys licensed by the California State Bar. All initial consultations are completely free and in Spanish or English, according to your preference.'}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '24px' }}>
+            {['Los Angeles', 'San Diego', 'San Francisco', 'San Jose', 'Fresno', 'Sacramento', 'Long Beach', 'Oakland'].map(city => (
+              <Link key={city} href={'/car-accident-attorney/' + city.toLowerCase().replace(/ /g, '-')}
+                style={{ padding: '8px 16px', background: 'white', border: '1px solid #BFDBFE', borderRadius: '20px', textDecoration: 'none', fontSize: '13px', color: '#1E40AF', fontWeight: '600' }}>
+                {city}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Why us */}
       <section style={{ padding: '64px 16px', background: '#F9FAFB' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', textAlign: 'center' }}>
