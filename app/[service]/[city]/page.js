@@ -32,7 +32,13 @@ export async function generateMetadata({ params }) {
   return {
     title: content?.metaTitle || (service.name + ' in ' + city.city + ', CA | Mar Vista Law'),
     description: content?.metaDescription || ('Find an experienced ' + service.name + ' attorney in ' + city.city + ', ' + city.county + ' County, California. Free consultation. Bilingual service.'),
-    alternates: { canonical: 'https://marvistalaw.com/' + params.service + '/' + params.city },
+    alternates: {
+      canonical: 'https://marvistalaw.com/' + params.service + '/' + params.city,
+      languages: {
+        'en': 'https://marvistalaw.com/' + params.service + '/' + params.city,
+        'es': service.slugEs ? 'https://marvistalaw.com/es/' + service.slugEs + '/' + params.city : undefined,
+      }
+    },
   };
 }
 
