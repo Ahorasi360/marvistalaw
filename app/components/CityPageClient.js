@@ -32,9 +32,10 @@ function getCityPhoto(slug) {
   return PICSUM_SEEDS[slug] || String(parseInt(slug.split('').reduce((a,c) => a + c.charCodeAt(0), 0)) % 900 + 100);
 }
 
-export default function CityPageClient({ service, cityData, content, relatedCities, relatedServices, serviceSlug, citySlug }) {
+export default function CityPageClient({ service, cityData, content, contentEs, relatedCities, relatedServices, serviceSlug, citySlug }) {
   const { lang } = useLang();
   const t = T[lang].page;
+  const activeContent = lang === 'es' && contentEs ? contentEs : content;
   const category = CATEGORIES[service.category];
   const serviceName = lang === 'es' ? service.nameEs : service.name;
   const imgSeed = getCityPhoto(cityData.slug);
@@ -65,7 +66,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
                 {serviceName} in {cityData.city}, California
               </h1>
               <p style={{ fontSize: '16px', opacity: 0.9, lineHeight: 1.6, margin: '0 0 20px' }}>
-                {content?.intro || service.description}
+                {activeContent?.intro || service.description}
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {['🏛️ ' + (lang === 'es' ? 'Licenciados en California' : 'California Licensed'), '🌎 Español & English', '📞 ' + (lang === 'es' ? 'Consulta Gratis' : 'Free Consultation'), '⚡ ' + (lang === 'es' ? 'Respuesta Rápida' : 'Fast Response')].map(b => (
@@ -102,7 +103,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
             </div>
 
             {/* What it is */}
-            {content?.whatItIs && (
+            {activeContent?.whatItIs && (
               <section style={{ marginBottom: '28px' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1E3A8A', marginBottom: '12px' }}>
                   {lang === 'es' ? '¿Qué es' : 'What is'} {serviceName}?
@@ -112,7 +113,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
             )}
 
             {/* Local context */}
-            {content?.localContext && (
+            {activeContent?.localContext && (
               <div style={{ background: '#EFF6FF', borderLeft: '4px solid #1E3A8A', borderRadius: '0 8px 8px 0', padding: '16px 20px', marginBottom: '28px' }}>
                 <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#1E3A8A', marginBottom: '8px' }}>
                   📍 {lang === 'es' ? 'Información Local' : 'Local Information'} — {cityData.county} County
@@ -122,7 +123,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
             )}
 
             {/* Cost comparison */}
-            {content?.costComparison && (
+            {activeContent?.costComparison && (
               <section style={{ marginBottom: '28px' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1E3A8A', marginBottom: '12px' }}>
                   💰 {lang === 'es' ? '¿Cuánto cuesta?' : 'How much does it cost?'}
@@ -132,7 +133,7 @@ export default function CityPageClient({ service, cityData, content, relatedCiti
             )}
 
             {/* FAQs */}
-            {content?.faqs && content.faqs.length > 0 && (
+            {activeContent?.faqs && content.faqs.length > 0 && (
               <section style={{ marginBottom: '28px' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1E3A8A', marginBottom: '16px' }}>
                   {lang === 'es' ? 'Preguntas Frecuentes' : 'Frequently Asked Questions'}
