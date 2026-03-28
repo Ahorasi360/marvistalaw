@@ -11,12 +11,12 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 async function getContent(city, service) {
   try {
     const res = await fetch(
-      SB_URL + '/rest/v1/marvistalaw_pages?city_slug=eq.' + city + '&service_slug=eq.' + service + '&select=content&limit=1',
+      SB_URL + '/rest/v1/marvistalaw_pages?city_slug=eq.' + city + '&service_slug=eq.' + service + '&select=content,content_es&limit=1',
       { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }, cache: 'no-store' }
     );
     if (!res.ok) return null;
     const rows = await res.json();
-    return rows[0]?.content || null;
+    return { en: rows[0]?.content || null, es: rows[0]?.content_es || null };
   } catch(e) {
     return null;
   }
@@ -26,7 +26,9 @@ export async function generateMetadata({ params }) {
   const service = SERVICES.find(s => s.slug === params.service);
   const city = CITIES.find(c => c.slug === params.city);
   if (!service || !city) return { title: 'Legal Resource | Mar Vista Law' };
-  const content = await getContent(params.city, params.service);
+  const contentData = await getContent(params.city, params.service);
+  const content = contentData?.en || null;
+  const contentEs = contentData?.es || null;
   return {
     title: content?.metaTitle || (service.name + ' in ' + city.city + ', CA | Mar Vista Law'),
     description: content?.metaDescription || ('Find an experienced ' + service.name + ' attorney in ' + city.city + ', ' + city.county + ' County, California. Free consultation. Bilingual service.'),
@@ -39,7 +41,9 @@ export default async function CityServicePage({ params }) {
   const cityData = CITIES.find(c => c.slug === params.city);
   if (!service || !cityData) notFound();
 
-  const content = await getContent(params.city, params.service);
+  const contentData = await getContent(params.city, params.service);
+  const content = contentData?.en || null;
+  const contentEs = contentData?.es || null;
 
   const relatedCities = CITIES
     .filter(c => c.county === cityData.county && c.slug !== params.city)
@@ -91,6 +95,7 @@ export default async function CityServicePage({ params }) {
         service={service}
         cityData={cityData}
         content={content}
+        contentEs={contentEs}
         relatedCities={relatedCities}
         relatedServices={relatedServices}
         serviceSlug={params.service}
