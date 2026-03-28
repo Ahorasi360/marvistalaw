@@ -148,6 +148,31 @@ export default function CityPageClient({ service, cityData, content, contentEs, 
               </section>
             )}
 
+
+            {/* MS360 Self-Help Legal Docs — Backlink CTA */}
+            <div style={{
+              background: 'linear-gradient(135deg, #1E3A8A 0%, #1e4fd4 100%)',
+              borderRadius: '12px',
+              padding: '24px',
+              marginBottom: '28px',
+            }}>
+              <p style={{ color: '#93c5fd', fontSize: '13px', fontWeight: 600, margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                {lang === 'es' ? '¿Necesitas el documento ahora?' : 'Need the document now?'}
+              </p>
+              <h3 style={{ color: 'white', fontSize: '20px', fontWeight: 700, margin: '0 0 10px' }}>
+                {lang === 'es' ? 'Prepara tu propio documento legal en minutos' : 'Prepare your own legal document in minutes'}
+              </h3>
+              <p style={{ color: '#bfdbfe', fontSize: '15px', margin: '0 0 16px', lineHeight: 1.6 }}>
+                {lang === 'es'
+                  ? 'MultiServicios360 es una plataforma bilingüe de autoayuda legal para familias latinas en California. Sin abogado, sin cita, desde $49.'
+                  : 'MultiServicios360 is a bilingual self-help legal platform for Latino families in California. No attorney needed, starting at $49.'}
+              </p>
+              <a href="https://multiservicios360.net" target="_blank" rel="noopener"
+                style={{ display: 'inline-block', background: '#F59E0B', color: 'white', fontWeight: 700, padding: '10px 24px', borderRadius: '8px', textDecoration: 'none', fontSize: '15px' }}>
+                {lang === 'es' ? 'Ir a MultiServicios360 →' : 'Visit MultiServicios360 →'}
+              </a>
+            </div>
+
             {/* Related cities */}
             {relatedCities.length > 0 && (
               <section style={{ marginBottom: '28px' }}>
