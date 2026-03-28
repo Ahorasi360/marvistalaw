@@ -32,9 +32,10 @@ function getCityPhoto(slug) {
   return PICSUM_SEEDS[slug] || String(parseInt(slug.split('').reduce((a,c) => a + c.charCodeAt(0), 0)) % 900 + 100);
 }
 
-export default function CityPageClient({ service, cityData, content, contentEs, relatedCities, relatedServices, serviceSlug, citySlug }) {
-  const { lang } = useLang();
-  const t = T[lang].page;
+export default function CityPageClient({ service, cityData, content, contentEs, relatedCities, relatedServices, serviceSlug, citySlug, defaultLang }) {
+  const { lang: userLang } = useLang();
+  const lang = defaultLang || userLang;
+  const t = T[lang]?.page || T['en'].page;
   const activeContent = lang === 'es' && contentEs ? contentEs : content;
   const category = CATEGORIES[service.category];
   const serviceName = lang === 'es' ? service.nameEs : service.name;
