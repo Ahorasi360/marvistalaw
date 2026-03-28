@@ -108,7 +108,7 @@ export default function CityPageClient({ service, cityData, content, contentEs, 
                 <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1E3A8A', marginBottom: '12px' }}>
                   {lang === 'es' ? '¿Qué es' : 'What is'} {serviceName}?
                 </h2>
-                <p style={{ fontSize: '16px', lineHeight: 1.75, color: '#374151' }}>{content.whatItIs}</p>
+                <p style={{ fontSize: '16px', lineHeight: 1.75, color: '#374151' }}>{activeContent?.whatItIs}</p>
               </section>
             )}
 
@@ -118,7 +118,7 @@ export default function CityPageClient({ service, cityData, content, contentEs, 
                 <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#1E3A8A', marginBottom: '8px' }}>
                   📍 {lang === 'es' ? 'Información Local' : 'Local Information'} — {cityData.county} County
                 </h3>
-                <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#1E40AF', margin: 0 }}>{content.localContext}</p>
+                <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#1E40AF', margin: 0 }}>{activeContent?.localContext}</p>
               </div>
             )}
 
@@ -128,17 +128,17 @@ export default function CityPageClient({ service, cityData, content, contentEs, 
                 <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1E3A8A', marginBottom: '12px' }}>
                   💰 {lang === 'es' ? '¿Cuánto cuesta?' : 'How much does it cost?'}
                 </h2>
-                <p style={{ fontSize: '16px', lineHeight: 1.75, color: '#374151' }}>{content.costComparison}</p>
+                <p style={{ fontSize: '16px', lineHeight: 1.75, color: '#374151' }}>{activeContent?.costComparison}</p>
               </section>
             )}
 
             {/* FAQs */}
-            {activeContent?.faqs && content.faqs.length > 0 && (
+            {activeContent?.faqs && activeContent?.faqs.length > 0 && (
               <section style={{ marginBottom: '28px' }}>
                 <h2 style={{ fontSize: '22px', fontWeight: '700', color: '#1E3A8A', marginBottom: '16px' }}>
                   {lang === 'es' ? 'Preguntas Frecuentes' : 'Frequently Asked Questions'}
                 </h2>
-                {content.faqs.map((faq, i) => (
+                {activeContent?.faqs.map((faq, i) => (
                   <div key={i} style={{ borderBottom: '1px solid #E5E7EB', paddingBottom: '16px', marginBottom: '16px' }}>
                     <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1E3A8A', margin: '0 0 8px' }}>Q: {faq.q}</h3>
                     <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#374151', margin: 0 }}>A: {faq.a}</p>
