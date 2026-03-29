@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navbar from './Navbar';
 import { useLang, T } from '../lib/LanguageContext';
@@ -22,6 +23,25 @@ const FEATURED = [
 export default function HomePageClient() {
   const { lang } = useLang();
   const t = T[lang];
+  const [userCity, setUserCity] = useState(null);
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+          );
+          const data = await res.json();
+          const city = data.city || data.locality || data.principalSubdivision || null;
+          if (city) setUserCity(city);
+        } catch (_) {}
+      },
+      () => {}
+    );
+  }, []);
 
   const featured = FEATURED.map(f => ({
     ...f,
@@ -32,6 +52,20 @@ export default function HomePageClient() {
   return (
     <>
       <Navbar />
+
+      {/* Geo Location Banner */}
+      {userCity && (
+        <div style={{ background: '#EFF6FF', borderBottom: '1px solid #BFDBFE', padding: '10px 16px', textAlign: 'center' }}>
+          <p style={{ fontSize: '14px', color: '#1E40AF', margin: 0, fontWeight: '500' }}>
+            📍 {lang === 'es'
+              ? `Conectamos a familias en ${userCity} con abogados licenciados en California`
+              : `Connecting families in ${userCity} with licensed California attorneys`}
+            {' '}<a href="/asistente" style={{ color: '#1E3A8A', fontWeight: '700', textDecoration: 'underline' }}>
+              {lang === 'es' ? 'Consulta gratis →' : 'Free consultation →'}
+            </a>
+          </p>
+        </div>
+      )}
 
       {/* Hero */}
       <section style={{ background: 'linear-gradient(135deg, #1E3A8A 0%, #1E40AF 60%, #1D4ED8 100%)', color: 'white', padding: '72px 16px' }}>
